@@ -1,0 +1,4 @@
+name: UlitmateShop
+version: 0.1
+main: com.hotmail.ownedwtf.UltimateShop.UltimateShop
+description: a bukkit plugin to manage donations and votes.
