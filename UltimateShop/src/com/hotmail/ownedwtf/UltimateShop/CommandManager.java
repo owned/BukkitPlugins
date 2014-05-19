@@ -33,7 +33,7 @@ public class CommandManager {
                 return true;
 
             }
-
+                MessageManager.getInstance().info(sender, "Vote Points " + mysql.getPlayerVotePoints(p));
         }
         return true;
     }

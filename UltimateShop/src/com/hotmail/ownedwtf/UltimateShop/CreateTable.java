@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public abstract class CreateTable {
 
-        public static final String TABLE_NAME = "UltimateShop";
+        public static final String TABLE_NAME = "UShop";
         public static final String PLAYER_COLUMN = "Player";
         public static final String UUID_COLUMN = "uuid";
         public static final String VOTE_COLUMN = "VotePoints";

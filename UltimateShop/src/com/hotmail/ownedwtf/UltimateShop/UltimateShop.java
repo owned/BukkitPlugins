@@ -12,7 +12,7 @@ public class UltimateShop  extends JavaPlugin{
     Connection con;
 
     public void OnEnable(){
-        mysql = new MySQLManager(this, "Host.name", "22565", "databasename", "user", "password");
+        mysql = new MySQLManager(this, "localhost", "3306", "UShop", "root", "");
         mysql.openConnection();
         CreateTable.createUltimateShopTable(con);
         Bukkit.getServer().getLogger().info("UltimateShop v" + this.getDescription().getVersion() + "enabled!");

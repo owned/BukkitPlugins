@@ -2,7 +2,6 @@ package com.hotmail.ownedwtf.UltimateShop;
 
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -67,16 +66,13 @@ public class MySQLManager extends Database {
         }
     }
 
-    public int getPlayerVotePoints(CommandSender sender, Player p, String[] args){
+    public int getPlayerVotePoints(Player p){
         try {
-            PreparedStatement st = connection.prepareStatement("select vpoints from users where uuid'" + p.getUniqueId() + "'");
+            PreparedStatement st = connection.prepareStatement("SELECT " + CreateTable.VOTE_COLUMN + " FROM " + CreateTable.TABLE_NAME + " WHERE " + CreateTable.PLAYER_COLUMN + " = '?';");
             st.setString(1, p.getName());
             ResultSet result = st.executeQuery();
-            if (result.next()) {
-                return result.getInt("vpoints");
-            } else {
-                return result.getInt(1);
-            }
+            result.next();
+            return result.getInt(1);
         }catch (SQLException e){
             e.printStackTrace();
         }
