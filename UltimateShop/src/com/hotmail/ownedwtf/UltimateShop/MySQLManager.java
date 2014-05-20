@@ -34,17 +34,15 @@ public class MySQLManager extends Database {
     }
 
     public Connection openConnection(){
-        try{
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
-        }catch (SQLException e){
-            e.printStackTrace();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not connect to MySQL server! because: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            plugin.getLogger().log(Level.SEVERE, "JDBC Driver not found!");
         }
-        return null;
+        return connection;
     }
 
     public boolean checkConnection(){

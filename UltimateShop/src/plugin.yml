@@ -2,3 +2,11 @@ name: UlitmateShop
 version: 0.1
 main: com.hotmail.ownedwtf.UltimateShop.UltimateShop
 description: a bukkit plugin to manage donations and votes.
+
+commands:
+    mysqlcheck:
+       usage: </command>
+       description: Checks to see if mysql can connect to the server.
+    openmysql:
+       usage: </command>
+       description: opens mysql connection.

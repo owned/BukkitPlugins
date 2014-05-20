@@ -24,6 +24,10 @@ public class MessageManager {
 	public void info(CommandSender sender, String msg){
 		msg(sender, ChatColor.YELLOW + "[UltimateShop] " + ChatColor.WHITE, msg);
 	}
+
+    public void mysqlcheck(CommandSender sender, String msg){
+        msg(sender, ChatColor.RED + "[UltimateShop] " + ChatColor.DARK_RED, msg);
+    }
 	
 	private void msg(CommandSender sender, String string, String msg){
 		sender.sendMessage(string + msg);
