@@ -10,12 +10,14 @@ import java.util.Arrays;
 
 import com.hotmail.ownedwtf.UltimateShop.cmds.*;
 
-public class CommandManager implements CommandExecutor{
+public class CommandManager implements CommandExecutor {
 
-private ArrayList<SubCommand> commands = new ArrayList<SubCommand>();
+    private ArrayList<SubCommand> commands = new ArrayList<SubCommand>();
 
     public void setup() {
-        commands.add(new checkVotePoints());
+
+        commands.add(new VotePoints());
+        commands.add(new CheckMySQL());
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -27,27 +29,35 @@ private ArrayList<SubCommand> commands = new ArrayList<SubCommand>();
 
         Player p = (Player) sender;
 
-        SubCommand target = get(args[0]);
+        if (cmd.getName().equalsIgnoreCase("ultimateshop")) {
+            if (args.length == 0) {
+                for (SubCommand c : commands) {
+                    MessageManager.getInstance().info(p, "/ultimateshop " + c.name() + " (" + aliases(c) + ")" + " - " + c.info());
+                }
+                return true;
+            }
 
-        if (target == null) {
-            MessageManager.getInstance().severe(p, "/ultmateshop " + args[0] + " is not a valid subcommand!");
+            SubCommand target = get(args[0]);
+
+            if (target == null) {
+                MessageManager.getInstance().severe(p, "/ultimateshop " + args[0] + " is not a valid subcommand!");
+                return true;
+            }
+
+            ArrayList<String> a = new ArrayList<String>();
+            a.addAll(Arrays.asList(args));
+            a.remove(0);
+            args = a.toArray(new String[a.size()]);
+
+            try {
+                target.onCommand(p, args);
+            } catch (Exception e) {
+                MessageManager.getInstance().severe(p, "An error has occured: " + e.getCause());
+                e.printStackTrace();
+            }
             return true;
         }
-
-        ArrayList<String> a = new ArrayList<String>();
-        a.addAll(Arrays.asList(args));
-        a.remove(0);
-        args = a.toArray(new String[a.size()]);
-
-        try {
-            target.onCommand(p, args);
-        }
-
-        catch (Exception e) {
-            MessageManager.getInstance().severe(p, "An error has occured: " + e.getCause());
-            e.printStackTrace();
-        }
-        return true;
+        return false;
     }
 
     private String aliases(SubCommand cmd) {

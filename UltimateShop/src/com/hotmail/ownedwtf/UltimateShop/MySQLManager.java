@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 import java.util.logging.Level;
 
@@ -64,6 +65,60 @@ public class MySQLManager extends Database {
         }
     }
 
+    public ResultSet querySQL(String query) {
+        Connection c = null;
+
+        if (checkConnection()) {
+            c = getConnection();
+        } else {
+            c = openConnection();
+        }
+
+        Statement s = null;
+
+        try {
+            s = c.createStatement();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+
+        ResultSet ret = null;
+
+        try {
+            ret = s.executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeConnection();
+
+        return ret;
+    }
+
+    public void updateSQL(String update) {
+
+        Connection c = null;
+
+        if (checkConnection()) {
+            c = getConnection();
+        } else {
+            c = openConnection();
+        }
+
+        Statement s = null;
+
+        try {
+            s = c.createStatement();
+            s.executeUpdate(update);
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+
+        closeConnection();
+
+    }
+
+    /*
     public int getPlayerVotePoints(Player p){
         try {
             PreparedStatement st = connection.prepareStatement("SELECT " + CreateTable.VOTE_COLUMN + " FROM " + CreateTable.TABLE_NAME + " WHERE " + CreateTable.PLAYER_COLUMN + " = '?';");
@@ -76,5 +131,6 @@ public class MySQLManager extends Database {
         }
         return -1;
     }
+    */
 
 }
