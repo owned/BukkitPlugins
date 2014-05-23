@@ -34,6 +34,12 @@ public class MySQLManager extends Database {
         this.connection = null;
     }
 
+    private static UltimateShop instance;
+
+    public static UltimateShop getInstance() {
+        return instance;
+    }
+
     public Connection openConnection(){
         try {
             Class.forName("com.mysql.jdbc.Driver");
