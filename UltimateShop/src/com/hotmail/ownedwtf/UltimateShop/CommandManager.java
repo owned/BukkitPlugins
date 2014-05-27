@@ -7,9 +7,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 
 public class CommandManager implements CommandExecutor {
 
+    MySQLManager mysql;
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (cmd.getName().equalsIgnoreCase("us") || cmd.getName().equalsIgnoreCase("ultimateshop")) {
@@ -33,12 +37,16 @@ public class CommandManager implements CommandExecutor {
                     if (args[0].equalsIgnoreCase("help")) {
                         p.sendMessage(ChatColor.GOLD + "----------" + ChatColor.GREEN + "UltimateShop Help" + ChatColor.GOLD + "----------");
                         p.sendMessage(ChatColor.GOLD + "/us votepoints - " + ChatColor.BLUE + "Shows you your available vote points");
+                        p.sendMessage(ChatColor.GOLD + "/us donorpoints - " + ChatColor.BLUE + "Shows you your available donor points");
                         return true;
                     }
                 }
-                //MySQLManager.getInstance().mysql.getConnection();
-                if (args[0].equalsIgnoreCase("votepoints")) {
-                    MessageManager.getInstance().mysqlcheck(p, String.format("Your MySQL is %s", MySQLManager.getInstance().mysql.checkConnection()));
+                if (args[0].equalsIgnoreCase("votepoints")){
+                    MessageManager.getInstance().success(p, "Vote Points: " + UltimateShop.getInstance().mysql.getPlayerVotePoints(p));
+                }
+
+                if (args[0].equalsIgnoreCase("donorpoints")){
+                    MessageManager.getInstance().success(p, "Donor Points: " + UltimateShop.getInstance().mysql.getPlayerDonorPoints(p));
                 }
                 return true;
             }

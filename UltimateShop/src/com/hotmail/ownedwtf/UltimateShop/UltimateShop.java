@@ -4,14 +4,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.entity.Player;
+
+import java.sql.*;
 
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-
-public class UltimateShop extends JavaPlugin {
+public class UltimateShop extends JavaPlugin implements Listener {
 
     private static UltimateShop instance;
 
@@ -22,7 +26,9 @@ public class UltimateShop extends JavaPlugin {
     public static UltimateShop getInstance() {
         return instance;
     }
+
     public void onEnable() {
+        Bukkit.getPluginManager().registerEvents(this, this);
 
         FileConfiguration config = getConfig();
 
@@ -47,28 +53,63 @@ public class UltimateShop extends JavaPlugin {
         mysql.closeConnection();
         c = null;
     }
-    public void CreateMySQLTable(){
-            mysql.updateSQL("CREATE TABLE IF NOT EXISTS ushop ( "
-                    + "   player VARCHAR(20), uuid VARCHAR(100), "
-                    + "   vote INT, donor INT )");
-        }
 
-    public void checkMySQL() throws SQLException, ClassNotFoundException{
-        Connection con = null;
-        con = mysql.getConnection();
-        if(!con.isClosed()){
-            mysql.openConnection();
-        }
-
+    public void CreateMySQLTable() {
+        mysql.updateSQL("CREATE TABLE IF NOT EXISTS ushop ( "
+                + "   player VARCHAR(20), uuid VARCHAR(100), "
+                + "   vote INT, donor INT, logins INT)");
     }
 
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
-        if(cmd.getName().equalsIgnoreCase("test")){
-            mysql.openConnection();
-            MessageManager.getInstance().info(sender, "Your mysql is " + mysql.checkConnection());
-            mysql.updateSQL("INSERT INTO `ushop`.`ushop` (`player`, `uuid`, `vote`, `donor`) VALUES ('test1', 'test', '12', '15');");
+    public boolean playerDataCheck(Player p){
+        try {
+            PreparedStatement SQL = mysql.openConnection().prepareStatement("SELECT * FROM `ushop` WHERE player=?;");
+            SQL.setString(1, p.getName());
+            ResultSet resultSet = SQL.executeQuery();
+            boolean playerisHere = resultSet.next();
+
+            SQL.close();
+            resultSet.close();
+            return playerisHere;
+        }catch (SQLException e){
+            e.printStackTrace();
+            return false;
         }
-        return true;
     }
 
-  }
+    @EventHandler
+    public void onPlayerJoinEvent(PlayerJoinEvent event) {
+        mysql.openConnection();
+        try{
+            int PastLogins = 0;
+
+            if (playerDataCheck(event.getPlayer())){
+                PreparedStatement SQL = mysql.openConnection().prepareStatement("SELECT * FROM `ushop` WHERE player=?;");
+                SQL.setString(1, event.getPlayer().getName());
+                ResultSet rs = SQL.executeQuery();
+                rs.next();
+
+                PastLogins = rs.getInt("logins");
+
+                PreparedStatement loginUpdater = mysql.openConnection().prepareStatement("UPDATE `ushop` SET logins=? WHERE player=?;");
+                loginUpdater.setInt(1, PastLogins + 1);
+                loginUpdater.setString(2, event.getPlayer().getName());
+                loginUpdater.executeUpdate();
+
+                loginUpdater.close();
+                SQL.close();
+                rs.close();
+            }else{
+                PreparedStatement addNewPlayer = mysql.openConnection().prepareStatement("INSERT INTO `ushop` values(?,?,0,0,1);");
+                addNewPlayer.setString(1, event.getPlayer().getName());
+                addNewPlayer.setString(2, event.getPlayer().getUniqueId().toString());
+                addNewPlayer.execute();
+                addNewPlayer.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            mysql.closeConnection();
+        }
+    }
+
+}

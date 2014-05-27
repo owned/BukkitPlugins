@@ -2,6 +2,7 @@ package com.hotmail.ownedwtf.UltimateShop;
 
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -96,7 +97,7 @@ public class MySQLManager extends Database {
             e.printStackTrace();
         }
 
-        closeConnection();
+        //closeConnection();
 
         return ret;
     }
@@ -120,23 +121,37 @@ public class MySQLManager extends Database {
             e1.printStackTrace();
         }
 
-        closeConnection();
+        //closeConnection();
 
     }
 
-    /*
-    public int getPlayerVotePoints(Player p){
+    public int getPlayerVotePoints(Player p) {
         try {
-            PreparedStatement st = connection.prepareStatement("SELECT " + CreateTable.VOTE_COLUMN + " FROM " + CreateTable.TABLE_NAME + " WHERE " + CreateTable.PLAYER_COLUMN + " = '?';");
-            st.setString(1, p.getName());
-            ResultSet result = st.executeQuery();
-            result.next();
-            return result.getInt(1);
+            openConnection();
+            ResultSet rs = querySQL("SELECT `vote` FROM `ushop` WHERE `player` = '" + p.getName() + "';");
+            if (rs.next()) {
+                return rs.getInt("vote");
+            }else return 0;
         }catch (SQLException e){
             e.printStackTrace();
         }
-        return -1;
+        return 0;
     }
-    */
+
+    public int getPlayerDonorPoints(Player p) {
+        try {
+            openConnection();
+            ResultSet rs = querySQL("SELECT `vote` FROM `ushop` WHERE `player` = '" + p.getName() + "';");
+            if (rs.next()) {
+                return rs.getInt("donor");
+            }else return 0;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void setPlayerVotePoints(Player p) {
+    }
 
 }
